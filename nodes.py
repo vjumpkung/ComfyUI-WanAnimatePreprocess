@@ -14,6 +14,13 @@ device = mm.get_torch_device()
 offload_device = mm.unet_offload_device()
 
 folder_paths.add_model_folder_path("detection", os.path.join(folder_paths.models_dir, "detection"))
+if "detection" in folder_paths.folder_names_and_paths:
+    paths, exts = folder_paths.folder_names_and_paths["detection"]
+    folder_paths.folder_names_and_paths["detection"] = (paths, set(exts) | {".onnx"})
+if hasattr(folder_paths, "filename_list_cache") and "detection" in folder_paths.filename_list_cache:
+    del folder_paths.filename_list_cache["detection"]
+if hasattr(folder_paths, "cache_helper"):
+    folder_paths.cache_helper.clear()
 
 from .models.onnx_models import ViTPose, Yolo
 from .pose_utils.pose2d_utils import load_pose_metas_from_kp2ds_seq, crop, bbox_from_detector
